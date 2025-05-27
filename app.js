@@ -1,19 +1,26 @@
-
 const express = require('express');
 const cors = require('cors');
 
-const app = express();
+const sequelize = require('./database');
+const User = require('./models/User');
 
-// Middleware
+const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Exempel på route
 app.get('/', (req, res) => {
   res.send('Webbshop-backend är igång!');
 });
 
-// Starta servern
+// Synka databas
+sequelize.sync({ alter: true })
+  .then(() => {
+    console.log('Databasen är synkroniserad');
+  })
+  .catch((err) => {
+    console.error('Fel vid databas-synk:', err);
+  });
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servern körs på http://localhost:${PORT}`);
