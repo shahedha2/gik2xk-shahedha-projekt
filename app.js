@@ -15,6 +15,8 @@ app.use(cors());
 app.use(express.json());
 app.use('/products', productRoutes);
 app.use('/users', userRoutes);
+require('./models/associations');
+
 
 
 
