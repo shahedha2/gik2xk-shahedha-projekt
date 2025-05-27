@@ -13,3 +13,19 @@ router.get('/', async (req, res) => {
 });
 
 module.exports = router;
+
+// Lägg till en ny produkt
+router.post('/', async (req, res) => {
+  try {
+    const { title, description, price, imageUrl } = req.body;
+    const product = await Product.create({
+      title,
+      description,
+      price,
+      imageUrl
+    });
+    res.status(201).json(product);
+  } catch (err) {
+    res.status(500).json({ error: 'Kunde inte skapa produkt' });
+  }
+});
