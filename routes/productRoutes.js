@@ -29,3 +29,30 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Kunde inte skapa produkt' });
   }
 });
+
+// Uppdatera en produkt
+router.put('/:id', async (req, res) => {
+  try {
+    const product = await Product.findByPk(req.params.id);
+    if (!product) return res.status(404).json({ error: 'Produkt hittades inte' });
+
+    await product.update(req.body);
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: 'Kunde inte uppdatera produkten' });
+  }
+});
+
+// Ta bort en produkt
+router.delete('/:id', async (req, res) => {
+  try {
+    const product = await Product.findByPk(req.params.id);
+    if (!product) return res.status(404).json({ error: 'Produkt hittades inte' });
+
+    await product.destroy();
+    res.json({ message: 'Produkten är borttagen' });
+  } catch (err) {
+    res.status(500).json({ error: 'Kunde inte ta bort produkten' });
+  }
+});
+
