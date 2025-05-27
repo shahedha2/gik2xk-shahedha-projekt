@@ -1,17 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
 
-// Lägg till en ny användare
+const { User } = require('../models/associations');
+
+// Route för att skapa en användare
 router.post('/', async (req, res) => {
   try {
-    const { first_name, last_name, email, password } = req.body;
-    const user = await User.create({
-      first_name,
-      last_name,
-      email,
-      password
-    });
+    const user = await User.create(req.body);
     res.status(201).json(user);
   } catch (err) {
     res.status(500).json({ error: 'Kunde inte skapa användare' });
