@@ -3,6 +3,7 @@ const cors = require('cors');
 
 const sequelize = require('./database');
 const User = require('./models/User');
+const Product = require('./models/Product');
 
 const app = express();
 app.use(cors());
