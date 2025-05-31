@@ -34,4 +34,34 @@ router.post('/addProduct', async (req, res) => {
   }
 });
 
+// Hämta senaste obetalda varukorg för en användare inkl. produkter
+router.get('/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const cart = await Cart.findOne({
+      where: { userId, payed: false },
+      include: [
+        {
+          model: CartRow,
+          include: [{ model: Product }]
+        }
+      ]
+    });
+
+    if (!cart) return res.status(404).json({ error: 'Ingen varukorg hittades' });
+
+    // Plocka ut relevant info om produkter och antal
+    const cartInfo = cart.CartRows.map(row => ({
+      product: row.Product,
+      amount: row.amount
+    }));
+
+    res.json({ cartId: cart.id, products: cartInfo });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

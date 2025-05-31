@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { User } = require('../models/associations');
+const { User, Cart, CartRow, Product } = require('../models/associations');
 
 // Route för att skapa en användare
 router.post('/', async (req, res) => {
@@ -49,6 +49,33 @@ router.get('/', async (req, res) => {
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: 'Kunde inte hämta användare' });
+  }
+});
+
+// Hämta en användares senaste obetalda varukorg och dess produkter
+router.get('/:id/getCart', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const cart = await Cart.findOne({
+      where: { userId, payed: false },
+      include: [
+        {
+          model: CartRow,
+          include: [{ model: Product }]
+        }
+      ]
+    });
+
+    if (!cart) return res.status(404).json({ error: 'Ingen varukorg hittades' });
+
+    const productsInCart = cart.CartRows.map(row => ({
+      product: row.Product,
+      amount: row.amount
+    }));
+
+    res.json({ cartId: cart.id, products: productsInCart });
+  } catch (err) {
+    res.status(500).json({ error: 'Kunde inte hämta varukorg' });
   }
 });
 
