@@ -9,6 +9,7 @@ const Cart = require('./models/Cart');
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
 const cartRoutes = require('./routes/cartRoutes');
+const ratingRoutes = require('./routes/ratingRoutes');
 
 require('./models/associations');
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use('/products', productRoutes);
 app.use('/users', userRoutes);
 app.use('/cart', cartRoutes);
+app.use('/products', ratingRoutes);
 
 
 

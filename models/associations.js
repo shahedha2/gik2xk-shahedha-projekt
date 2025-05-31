@@ -2,6 +2,7 @@ const User = require('./User');
 const Product = require('./Product');
 const Cart = require('./Cart');
 const CartRow = require('./CartRow');
+const Rating = require('./Rating');
 
 // Relationer
 
@@ -17,9 +18,14 @@ CartRow.belongsTo(Cart, { foreignKey: 'cartId' });
 Product.hasMany(CartRow, { foreignKey: 'productId' });
 CartRow.belongsTo(Product, { foreignKey: 'productId' });
 
+// En produkt kan ha många ratingar (betyg)
+Product.hasMany(Rating, { foreignKey: 'productId', onDelete: 'CASCADE' });
+Rating.belongsTo(Product, { foreignKey: 'productId' }); 
+
 module.exports = {
   User,
   Product,
   Cart,
   CartRow,
+  Rating
 };

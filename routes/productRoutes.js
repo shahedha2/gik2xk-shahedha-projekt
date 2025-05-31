@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
+const { Rating } = require('../models/associations');
 
 // Hämta alla produkter
 router.get('/', async (req, res) => {
@@ -12,7 +13,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-module.exports = router;
 
 // Lägg till en ny produkt
 router.post('/', async (req, res) => {
@@ -56,5 +56,43 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Lägg till betyg på en produkt
+router.post('/:id/addRating', async (req, res) => {
+  try {
+    const { rating, userId } = req.body;
+    const productId = req.params.id;
+    const newRating = await Rating.create({ rating, productId, userId });
+    res.status(201).json(newRating);
+  } catch (err) {
+    res.status(500).json({ error: 'Kunde inte lägga till betyg' });
+  }
+});
+
+// Hämta alla betyg för en produkt
+router.get('/:id/ratings', async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const ratings = await Rating.findAll({ where: { productId } });
+    res.json(ratings);
+  } catch (err) {
+    res.status(500).json({ error: 'Kunde inte hämta betyg' });
+  }
+});
+
+// Hämta snittbetyg för en produkt
+router.get('/:id/averageRating', async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const ratings = await Rating.findAll({ where: { productId } });
+    if (ratings.length === 0) return res.json({ average: null });
+    const average =
+      ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
+    res.json({ average });
+  } catch (err) {
+    res.status(500).json({ error: 'Kunde inte hämta snittbetyg' });
+  }
+});
 
 
+
+module.exports = router;
